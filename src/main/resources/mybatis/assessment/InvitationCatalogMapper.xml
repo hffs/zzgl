@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.onlineReview.mapper.InvitationCatalogMapper">
+
+	<resultMap type="com.ruoyi.project.onlineReview.domain.InvitationCatalog" id="InvitationCatalogResult">
+		<id     property="catalogId"     column="catalog_id"     />
+		<result property="parentId"   column="parent_id"   />
+		<result property="ancestors"  column="ancestors"   />
+		<result property="catalogName"   column="catalog_name"   />
+		<result property="orderNum"   column="order_num"   />
+		<result property="status"     column="status"      />
+		<result property="parentName" column="parent_name" />
+		<result property="tenantId"    column="tenant_id"    />
+	</resultMap>
+
+	<sql id="selectInvitationCatalogVo">
+        select d.catalog_id, d.parent_id, d.ancestors, d.catalog_name, d.order_num, d.status,d.tenant_id
+        from invitation_catalog d
+    </sql>
+
+	<select id="selectInvitationCatalogList" parameterType="com.ruoyi.project.onlineReview.domain.InvitationCatalog" resultMap="InvitationCatalogResult">
+        <include refid="selectInvitationCatalogVo"/>
+        <where>
+			<if test="parentId != null and parentId != 0">
+				AND parent_id = #{parentId}
+			</if>
+			<if test="catalogName != null and catalogName != ''">
+				AND catalog_name like concat('%', #{catalogName}, '%')
+			</if>
+			<if test="test != null  and test != ''"> and status in
+				<foreach collection="test" item="a" index="index"
+						 open="(" close=")" separator=",">
+					#{a}
+				</foreach>
+			</if>
+
+		</where>
+		order by d.parent_id, d.order_num
+    </select>
+
+	<select id="selectInvitationCatalogListBytenantId" parameterType="com.ruoyi.project.onlineReview.domain.InvitationCatalog" resultMap="InvitationCatalogResult">
+		<include refid="selectInvitationCatalogVo"/>
+		<where>
+			<if test="parentId != null and parentId != 0">
+				AND parent_id = #{parentId}
+			</if>
+			<if test="catalogName != null and catalogName != ''">
+				AND catalog_name like concat('%', #{catalogName}, '%')
+			</if>
+			<if test="status != null and status != ''">
+				AND status = #{status}
+			</if>
+
+		</where>
+		order by d.parent_id, d.order_num
+	</select>
+
+	<select id="hasChildBycatalogId" resultType="int">
+		select count(1) from invitation_catalog
+		where parent_id = #{catalogId}
+	</select>
+
+	<select id="selectChildrenInvitationCatalogById" resultMap="InvitationCatalogResult">
+		<include refid="selectInvitationCatalogVo"/>
+		where find_in_set(#{catalogId}, d.ancestors)
+	</select>
+
+	<select id="checkcatalogNameUnique" resultMap="InvitationCatalogResult">
+	    <include refid="selectInvitationCatalogVo"/>
+		where catalog_name=#{catalogName} and parent_id = #{parentId}
+	</select>
+
+	<select id="queryChildId" resultType="java.lang.Long">
+		select dept_id from invitation_catalog
+		where find_in_set(#{catalogId}, ancestors)
+	</select>
+
+
+	<update id="updateInvitationCatalog" parameterType="com.ruoyi.project.onlineReview.domain.InvitationCatalog">
+ 		update invitation_catalog
+ 		<set>
+ 			<if test="parentId != null and parentId != 0">parent_id = #{parentId},</if>
+ 			<if test="catalogName != null and catalogName != ''">catalog_name = #{catalogName},</if>
+ 			<if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
+ 			<if test="orderNum != null and orderNum != ''">order_num = #{orderNum},</if>
+ 			<if test="status != null and status != ''">status = #{status},</if>
+ 		</set>
+ 		where catalog_id = #{catalogId}
+	</update>
+
+	<update id="updateInvitationCatalogChildren" parameterType="java.util.List">
+	    update invitation_catalog set ancestors =
+	    <foreach collection="invitationCatalogs" item="item" index="index"
+	        separator=" " open="case catalog_id" close="end">
+	        when #{item.catalogId} then #{item.ancestors}
+	    </foreach>
+	    where dept_id in
+	    <foreach collection="invitationCatalogs" item="item" index="index"
+	        separator="," open="(" close=")">
+	        #{item.catalogId}
+	    </foreach>
+	</update>
+
+	 <update id="updateInvitationCatalogStatus" parameterType="com.ruoyi.project.onlineReview.domain.InvitationCatalog">
+ 	    update sys_dept
+ 	    <set>
+ 	        <if test="status != null and status != ''">status = #{status},</if>
+        </set>
+ 	    where catalog_id in (${ancestors})
+	</update>
+
+</mapper>

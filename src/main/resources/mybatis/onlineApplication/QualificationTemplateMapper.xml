@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.onlineApplication.mapper.QualificationTemplateMapper">
+
+    <resultMap type="com.ruoyi.project.onlineApplication.domain.QualificationTemplate" id="QualificationTemplateResult">
+        <result property="id"    column="id"    />
+        <result property="qualificationName"    column="qualification_name"    />
+        <result property="qualificationType"    column="qualification_type"    />
+        <result property="qualificationEntrance"    column="qualification_entrance"    />
+        <result property="componentAddress"    column="component_address"    />
+        <result property="routingAddress"    column="routing_address"    />
+        <result property="templateData"    column="template_data"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectQualificationTemplateVo">
+        select id, qualification_name, qualification_type, qualification_entrance, component_address, routing_address, template_data, remark from qualification_template
+    </sql>
+
+    <select id="selectQualificationTemplateList" parameterType="com.ruoyi.project.onlineApplication.domain.QualificationTemplate" resultMap="QualificationTemplateResult">
+        <include refid="selectQualificationTemplateVo"/>
+        <where>
+            <if test="qualificationName != null  and qualificationName != ''"> and qualification_name like concat('%', #{qualificationName}, '%')</if>
+            <if test="qualificationType != null  and qualificationType != ''"> and qualification_type = #{qualificationType}</if>
+            <if test="qualificationEntrance != null  and qualificationEntrance != ''"> and qualification_entrance = #{qualificationEntrance}</if>
+            <if test="componentAddress != null  and componentAddress != ''"> and component_address = #{componentAddress}</if>
+            <if test="routingAddress != null  and routingAddress != ''"> and routing_address = #{routingAddress}</if>
+            <if test="templateData != null  and templateData != ''"> and template_data = #{templateData}</if>
+        </where>
+        ORDER BY qualification_entrance
+    </select>
+
+    <select id="selectQualificationTemplateById" parameterType="java.lang.Long" resultMap="QualificationTemplateResult">
+        <include refid="selectQualificationTemplateVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertQualificationTemplate" parameterType="com.ruoyi.project.onlineApplication.domain.QualificationTemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into qualification_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qualificationName != null  and qualificationName != ''">qualification_name,</if>
+            <if test="qualificationType != null  and qualificationType != ''">qualification_type,</if>
+            <if test="qualificationEntrance != null  and qualificationEntrance != ''">qualification_entrance,</if>
+            <if test="componentAddress != null  and componentAddress != ''">component_address,</if>
+            <if test="routingAddress != null  and routingAddress != ''">routing_address,</if>
+            <if test="templateData != null  and templateData != ''">template_data,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qualificationName != null  and qualificationName != ''">#{qualificationName},</if>
+            <if test="qualificationType != null  and qualificationType != ''">#{qualificationType},</if>
+            <if test="qualificationEntrance != null  and qualificationEntrance != ''">#{qualificationEntrance},</if>
+            <if test="componentAddress != null  and componentAddress != ''">#{componentAddress},</if>
+            <if test="routingAddress != null  and routingAddress != ''">#{routingAddress},</if>
+            <if test="templateData != null  and templateData != ''">#{templateData},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQualificationTemplate" parameterType="com.ruoyi.project.onlineApplication.domain.QualificationTemplate">
+        update qualification_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qualificationName != null  and qualificationName != ''">qualification_name = #{qualificationName},</if>
+            <if test="qualificationType != null  and qualificationType != ''">qualification_type = #{qualificationType},</if>
+            <if test="qualificationEntrance != null  and qualificationEntrance != ''">qualification_entrance = #{qualificationEntrance},</if>
+            <if test="componentAddress != null  and componentAddress != ''">component_address = #{componentAddress},</if>
+            <if test="routingAddress != null  and routingAddress != ''">routing_address = #{routingAddress},</if>
+            <if test="templateData != null  and templateData != ''">template_data = #{templateData},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQualificationTemplateById" parameterType="java.lang.Long">
+        delete from qualification_template where id = #{id}
+    </delete>
+
+    <delete id="deleteQualificationTemplateByIds" parameterType="java.lang.String">
+        delete from qualification_template where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

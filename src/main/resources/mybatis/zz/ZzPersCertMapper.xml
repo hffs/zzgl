@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.zz.mapper.ZzPersCertMapper">
+    
+    <resultMap type="ZzPersCert" id="ZzPersCertResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="name"    column="name"    />
+        <result property="startEndDate"    column="start_end_date"    />
+        <result property="type"    column="type"    />
+        <result property="introduce"    column="introduce"    />
+        <result property="picUrl"    column="pic_url"    />
+        <result property="tenantId"    column="tenant_id"    />
+    </resultMap>
+
+
+</mapper>

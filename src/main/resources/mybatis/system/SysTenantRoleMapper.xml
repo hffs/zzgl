@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.SysTenantRoleMapper">
+
+    <sql id="baseSql">
+        select a.id, a.name, a.remark, a.type, a.status, a.children_type, a.children_data
+    </sql>
+
+    <select id="queryList" resultType="com.ruoyi.project.system.domain.SysTenantRole">
+        <include refid="baseSql"/>
+        from sys_tenant_role a
+        <where>
+            <if test="name != null and name != ''">
+                and INSTR(a.name, #{name})>0
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            <if test="childrenType != null">
+                and a.children_type = #{childrenType}
+            </if>
+        </where>
+        order by a.type, a.id
+    </select>
+
+    <select id="hasName" resultType="java.lang.Integer">
+        select count (1) from sys_tenant_role
+        <where>
+            <if test="id != null">
+                and id != #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+        </where>
+    </select>
+
+</mapper>

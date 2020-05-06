@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.zz.mapper.ZzCompFilesMapper">
+
+    <resultMap type="com.ruoyi.project.zz.domain.ZzCompFiles" id="ZzCompFilesResult">
+        <result property="id"    column="id"    />
+        <result property="projectId" column="project_id" />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileType"    column="file_type"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="size"    column="size"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="tenantId"    column="tenant_id"    />
+    </resultMap>
+
+    <sql id="selectFilesVo">
+        select d.id, d.project_id,d.parent_id, d.ancestors, d.file_name, d.file_type, d.file_path, d.size, d.create_time ,d.update_time
+        from zz_comp_files d
+    </sql>
+
+    <select id="selectFilesList" parameterType="com.ruoyi.project.zz.domain.ZzCompFiles" resultMap="ZzCompFilesResult">
+        <include refid="selectFilesVo"/>
+        where 1=1
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="projectId != null">
+            AND project_id = #{projectId}
+        </if>
+        <if test="parentId != null">
+            AND parent_id = #{parentId}
+        </if>
+        <if test="fileName != null and fileName != ''">
+            AND file_name like concat('%', #{fileName}, '%')
+        </if>
+        <if test="fileType != null and fileType != ''">
+            AND file_type = #{fileType}
+        </if>
+        order by d.parent_id
+    </select>
+
+    <select id="selectFileById" parameterType="java.lang.Long" resultMap="ZzCompFilesResult">
+        <include refid="selectFilesVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="hasChildByFileId" parameterType="java.lang.Long" resultType="int">
+		select count(1) from zz_comp_files
+		where parent_id = #{id}
+	</select>
+
+    <select id="selectChildrenFileById" parameterType="java.lang.Long" resultMap="ZzCompFilesResult">
+		select * from zz_comp_files where find_in_set(#{id}, ancestors)
+	</select>
+    <select id="findInSetAncestors" resultType="java.lang.Long">
+       SELECT id FROM zz_comp_files WHERE find_in_set(#{id}, ancestors);
+    </select>
+
+    <insert id="insertFile" parameterType="com.ruoyi.project.zz.domain.ZzCompFiles" >
+        INSERT INTO zz_comp_files (
+            <if test="projectId != null">project_id, </if>
+            <if test="parentId != null">parent_id, </if>
+            <if test="ancestors != null and ancestors != ''">ancestors, </if>
+            <if test="fileName != null and fileName != ''">file_name, </if>
+            <if test="fileType != null and fileType != ''">file_type, </if>
+            <if test="filePath != null and filePath != ''">file_path,</if>
+            <if test="size != null and size != ''">size, </if>
+            <if test="createBy != null and createBy != ''">create_by, </if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            create_time
+        ) VALUES (
+            <if test="projectId != null">#{projectId}, </if>
+            <if test="parentId != null">#{parentId}, </if>
+            <if test="ancestors != null and ancestors != ''">#{ancestors}, </if>
+            <if test="fileName != null and fileName != ''">#{fileName}, </if>
+            <if test="fileType != null and fileType != ''">#{fileType}, </if>
+            <if test="filePath != null and filePath != ''">#{filePath},</if>
+            <if test="size != null and size != ''">#{size}, </if>
+            <if test="createBy != null and createBy != ''">#{createBy}, </if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            sysdate()
+        );
+    </insert>
+
+    <update id="updateFile" parameterType="com.ruoyi.project.zz.domain.ZzCompFiles" >
+        update zz_comp_files
+        <set>
+            <if test="parentId != null">parent_id = #{parentId}, </if>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName}, </if>
+            update_time = sysdate()
+        </set>
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <update id="updateFileChildren" parameterType="java.util.List">
+        update zz_comp_files set ancestors =
+        <foreach collection="files" item="item" index="index"
+                 separator=" " open="case id" close="end">
+            when #{item.id} then #{item.ancestors}
+        </foreach>
+        where id in
+        <foreach collection="files" item="item" index="index"
+                 separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <delete id="deleteByProjectId"  parameterType="java.lang.Long">
+        delete from zz_comp_files where project_id = #{projectId}
+    </delete>
+
+
+
+</mapper>

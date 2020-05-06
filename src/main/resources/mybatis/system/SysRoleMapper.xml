@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.SysRoleMapper">
+
+	<resultMap type="SysRole" id="SysRoleResult">
+		<id     property="roleId"       column="role_id"        />
+		<result property="roleName"     column="role_name"      />
+		<result property="roleSort"     column="role_sort"      />
+		<result property="status"       column="status"         />
+		<result property="remark"       column="remark"         />
+	</resultMap>
+	
+	<sql id="selectRoleVo">
+	    select r.role_id, r.role_name, r.role_sort, r.status, r.remark
+        from sys_role r
+    </sql>
+    
+    <select id="selectRoleList" resultType="com.ruoyi.project.system.domain.SysRole">
+		<include refid="selectRoleVo"/>
+		<where>
+			<if test="roleName != null and roleName != ''">
+				AND r.role_name like concat('%', #{roleName}, '%')
+			</if>
+			<if test="status != null and status != ''">
+				AND r.status = #{status}
+			</if>
+		</where>
+	</select>
+    
+	<select id="checkRoleNameUnique" resultType="com.ruoyi.project.system.domain.SysRole">
+		<include refid="selectRoleVo"/>
+		 where r.role_name=#{roleName}
+	</select>
+
+	<select id="selectRoleByUserId" resultType="com.ruoyi.project.system.domain.SysRole">
+		select r.role_id, r.role_name
+        from sys_role r
+	        left join sys_user_role ur on ur.role_id = r.role_id
+	        left join sys_user u on u.user_id = ur.user_id
+	    where u.user_id = #{userId}
+	</select>
+
+	<update id="updateRole">
+ 		update sys_role
+ 		<set>
+ 			<if test="roleName != null and roleName != ''">role_name = #{roleName},</if>
+ 			<if test="roleSort != null and roleSort != ''">role_sort = #{roleSort},</if>
+ 			<if test="status != null and status != ''">status = #{status},</if>
+			remark = #{remark}
+ 		</set>
+ 		where role_id = #{roleId}
+	</update>
+
+</mapper>

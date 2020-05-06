@@ -1,0 +1,23 @@
+ITSS评审表设计：
+    表名：review_form_elements:评审表-元素类型(不进行数据隔离)
+    id:自增主键
+    name：元素名称
+    对应SQL{CREATE TABLE `NewTable` (
+          	`id` INT (11) NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+          	`name` VARCHAR (255) CHARACTER
+          SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '元素名称',
+           PRIMARY KEY (`id`)
+          ) ENGINE = MyISAM DEFAULT CHARACTER
+          SET = utf8 COLLATE = utf8_general_ci COMMENT = '评审表元素' AUTO_INCREMENT = 1 CHECKSUM = 0 ROW_FORMAT = DYNAMIC DELAY_KEY_WRITE = 0;
+    }
+    对应关联表：
+        表名：review_personnel：评审表-人员信息
+        id:自增主键
+        position：职位
+        name：姓名
+        review_id 评审表-元素类型关联Id
+        表名：review_contract：评审表-合同信息
+        id：自增主键
+        name：合同名称
+        describe：合同描述
+        review_id 评审表-元素类型关联Id

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.gjzc.mapper.PublicGjzcMapper">
+    
+    <resultMap type="PublicGjzc" id="PublicGjzcResult">
+        <result property="id"    column="id"    />
+        <result property="policytype"    column="policyType"    />
+        <result property="policytypename"    column="policyTypeName"    />
+        <result property="policydate"    column="policyDate"    />
+        <result property="policycity"    column="policyCity"    />
+        <result property="policyprovince"    column="policyProvince"    />
+        <result property="policylinkurl"    column="policyLinkUrl"    />
+        <result property="policysource"    column="policySource"    />
+        <result property="policyname"    column="policyName"    />
+        <result property="policyno"    column="policyNo"    />
+    </resultMap>
+
+    <sql id="selectPublicGjzcVo">
+        select id, policyType, policyTypeName, policyDate, policyCity, policyProvince, policyLinkUrl, policySource, policyName, policyNo from public_gjzc
+    </sql>
+
+    <select id="selectPublicGjzcList" parameterType="PublicGjzc" resultMap="PublicGjzcResult">
+        <include refid="selectPublicGjzcVo"/>
+        <where>  
+            <if test="policytype != null  and policytype != ''"> and policyType = #{policytype}</if>
+            <if test="policyprovince != null  and policyprovince != ''"> and policyprovince like concat('%', #{policyprovince}, '%')</if>
+
+            <if test="policyname != null  and policyname != ''"> and policyName like concat('%', #{policyname}, '%')</if>
+
+        </where>
+    </select>
+    
+    <select id="selectPublicGjzcById" parameterType="Long" resultMap="PublicGjzcResult">
+        <include refid="selectPublicGjzcVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPublicGjzc" parameterType="PublicGjzc" useGeneratedKeys="true" keyProperty="id">
+        insert into public_gjzc
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="policytype != null  and policytype != ''">policyType,</if>
+            <if test="policytypename != null  and policytypename != ''">policyTypeName,</if>
+            <if test="policydate != null ">policyDate,</if>
+            <if test="policycity != null  and policycity != ''">policyCity,</if>
+            <if test="policyprovince != null  and policyprovince != ''">policyProvince,</if>
+            <if test="policylinkurl != null  and policylinkurl != ''">policyLinkUrl,</if>
+            <if test="policysource != null  and policysource != ''">policySource,</if>
+            <if test="policyname != null  and policyname != ''">policyName,</if>
+            <if test="policyno != null ">policyNo,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="policytype != null  and policytype != ''">#{policytype},</if>
+            <if test="policytypename != null  and policytypename != ''">#{policytypename},</if>
+            <if test="policydate != null ">#{policydate},</if>
+            <if test="policycity != null  and policycity != ''">#{policycity},</if>
+            <if test="policyprovince != null  and policyprovince != ''">#{policyprovince},</if>
+            <if test="policylinkurl != null  and policylinkurl != ''">#{policylinkurl},</if>
+            <if test="policysource != null  and policysource != ''">#{policysource},</if>
+            <if test="policyname != null  and policyname != ''">#{policyname},</if>
+            <if test="policyno != null ">#{policyno},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePublicGjzc" parameterType="PublicGjzc">
+        update public_gjzc
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="policytype != null  and policytype != ''">policyType = #{policytype},</if>
+            <if test="policytypename != null  and policytypename != ''">policyTypeName = #{policytypename},</if>
+            <if test="policydate != null ">policyDate = #{policydate},</if>
+            <if test="policycity != null  and policycity != ''">policyCity = #{policycity},</if>
+            <if test="policyprovince != null  and policyprovince != ''">policyProvince = #{policyprovince},</if>
+            <if test="policylinkurl != null  and policylinkurl != ''">policyLinkUrl = #{policylinkurl},</if>
+            <if test="policysource != null  and policysource != ''">policySource = #{policysource},</if>
+            <if test="policyname != null  and policyname != ''">policyName = #{policyname},</if>
+            <if test="policyno != null ">policyNo = #{policyno},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePublicGjzcById" parameterType="Long">
+        delete from public_gjzc where id = #{id}
+    </delete>
+
+    <delete id="deletePublicGjzcByIds" parameterType="String">
+        delete from public_gjzc where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.SysTenantMapper">
+    
+    <resultMap type="SysTenant" id="SysTenantResult">
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="tenantNo"    column="tenant_no"    />
+        <result property="tenantName"    column="tenant_name"    />
+        <result property="tenantType"    column="tenant_type"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="contact"    column="contact"    />
+        <result property="phone"    column="phone"    />
+        <result property="address"    column="address"    />
+        <result property="status"    column="status"    />
+        <result property="dueTime"    column="due_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="baseSql">
+        select a.tenant_id, a.role_id, a.tenant_no, a.tenant_name, a.tenant_type, a.contact, a.phone, a.address, a.status, a.due_time, a.create_time, a.update_time, a.remark
+    </sql>
+
+    <select id="queryList" resultType="com.ruoyi.project.system.domain.SysTenant">
+        <include refid="baseSql"/>, str.name as roleName
+        from sys_tenant a
+        left join sys_tenant_role str on a.role_id = str.id
+        <where>
+            <if test="tenantNo != null and tenantNo != ''">
+                and a.tenant_no = #{tenantNo}
+            </if>
+            <if test="tenantName != null and tenantName != ''">
+                and INSTR(a.tenant_name, #{tenantName})>0
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            <if test="roleId != null and roleId != ''">
+                and a.role_id = #{roleId}
+            </if>
+            and a.tenant_type = 1
+            and a.status != '2'
+        </where>
+    </select>
+
+    <select id="hasTenantNo" resultType="java.lang.Integer">
+        select count (1) from sys_tenant
+        <where>
+            <if test="tenantId != null">
+                and tenant_id != #{tenantId}
+            </if>
+            <if test="tenantNo != null and tenantNo != ''">
+                and tenant_no = #{tenantNo}
+            </if>
+            and status != '2'
+        </where>
+    </select>
+
+    <select id="queryByTenantNo" resultMap="SysTenantResult">
+        <include refid="baseSql"/>
+        from sys_tenant a
+        <where>
+            and a.tenant_no = #{tenantNo}
+            and a.status != '2'
+        </where>
+    </select>
+
+    <select id="queryByRoleId" resultType="java.lang.Integer">
+        select count(1) from sys_tenant
+        <where>
+            and role_id = #{roleId}
+            and status != '2'
+        </where>
+    </select>
+
+    <update id="updateTenant">
+        update sys_tenant
+        <set>
+            <if test="tenantNo != null and tenantNo != ''">
+                tenant_no = #{tenantNo},
+            </if>
+            <if test="tenantName != null and tenantName != ''">
+                tenant_name = #{tenantName},
+            </if>
+            <if test="contact != null and contact != ''">
+                contact = #{contact},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="dueTime != null">
+                due_time = #{dueTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+        </set>
+        <where>
+            tenant_id = #{tenantId}
+        </where>
+    </update>
+
+    <update id="updateStatus">
+        update sys_tenant
+        <set>
+            status = #{status}
+        </set>
+        <where>
+            and tenant_id = #{tenantId}
+            and status != '2'
+        </where>
+    </update>
+
+    <update id="removeTenant">
+        update sys_tenant
+        <set>
+            status = '2'
+        </set>
+        <where>
+            tenant_id = #{tenantId}
+        </where>
+    </update>
+
+</mapper>

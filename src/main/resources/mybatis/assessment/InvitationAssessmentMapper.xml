@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.onlineReview.mapper.InvitationAssessmentMapper">
+
+    <resultMap type="com.ruoyi.project.onlineReview.domain.InvitationAssessment" id="InvitationAssessmentResult">
+        <result property="id"    column="id"    />
+        <result property="corporateName"    column="corporate_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="auditType"    column="audit_type"    />
+        <result property="applicationUrl"    column="application_url"    />
+        <result property="submitter"    column="submitter"    />
+        <result property="currentState"    column="current_state"    />
+        <result property="auditTime"    column="audit_time"    />
+        <result property="approver"    column="approver"    />
+        <result property="applicationName"    column="application_name"    />
+        <result property="tenantId"    column="tenant_id"    />
+    </resultMap>
+
+    <sql id="selectInvitationAssessmentVo">
+        select id, corporate_name, create_time,tenant_id, audit_type, application_url, submitter, current_state, audit_time, approver ,application_name from invitation_assessment
+    </sql>
+
+    <select id="selectInvitationAssessmentList" parameterType="com.ruoyi.project.onlineReview.domain.InvitationAssessment" resultMap="InvitationAssessmentResult">
+        <include refid="selectInvitationAssessmentVo"/>
+        <where>
+            <if test="corporateName != null  and corporateName != ''"> and corporate_name like concat('%', #{corporateName}, '%')</if>
+            <if test="auditType != null  and auditType != ''"> and audit_type = #{auditType}</if>
+            <if test="currentState != null  and currentState != ''"> and current_state = #{currentState}</if>
+            <if test="auditTime != null "> and audit_time = #{auditTime}</if>
+            <if test="approver != null  and approver != ''"> and approver = #{approver}</if>
+        </where>
+    </select>
+
+
+
+
+    <select id="selectInvitationAssessmentById" parameterType="java.lang.Long" resultMap="InvitationAssessmentResult">
+        <include refid="selectInvitationAssessmentVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectByJgInvitationAssessmentList"
+            resultType="com.ruoyi.project.onlineReview.domain.InvitationAssessment">
+        <include refid="selectInvitationAssessmentVo"/>
+        <where>
+            <if test="corporateName != null  and corporateName != ''"> and corporate_name like concat('%', #{corporateName}, '%')</if>
+            <if test="test != null  and test != ''"> and audit_type in
+                <foreach collection="test" item="a" index="index"
+                         open="(" close=")" separator=",">
+                    #{a}
+                </foreach>
+            </if>
+            <if test="currentState != null  and currentState != ''"> and current_state = #{currentState}</if>
+            <if test="auditTime != null "> and audit_time = #{auditTime}</if>
+            <if test="approver != null  and approver != ''"> and approver = #{approver}</if>
+        </where>
+    </select>
+
+    <insert id="insertInvitationAssessment" useGeneratedKeys="true" keyProperty="id" parameterType="com.ruoyi.project.onlineReview.domain.InvitationAssessment">
+        insert into invitation_assessment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="corporateName != null  and corporateName != ''">corporate_name,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="auditType != null  and auditType != ''">audit_type,</if>
+            <if test="applicationUrl != null  and applicationUrl != ''">application_url,</if>
+            <if test="submitter != null  and submitter != ''">submitter,</if>
+            <if test="currentState != null  and currentState != ''">current_state,</if>
+            <if test="auditTime != null ">audit_time,</if>
+            <if test="approver != null  and approver != ''">approver,</if>
+            <if test="createBy != null  and create_by != ''">creat_by,</if>
+            <if test="applicationName != null  and applicationName != ''">application_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="corporateName != null  and corporateName != ''">#{corporateName},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="auditType != null  and auditType != ''">#{auditType},</if>
+            <if test="applicationUrl != null  and applicationUrl != ''">#{applicationUrl},</if>
+            <if test="submitter != null  and submitter != ''">#{submitter},</if>
+            <if test="currentState != null  and currentState != ''">#{currentState},</if>
+            <if test="auditTime != null ">#{auditTime},</if>
+            <if test="approver != null  and approver != ''">#{approver},</if>
+            <if test="createBy != null  and create_by != ''">#{approver},</if>
+            <if test="applicationName != null  and applicationName != ''">#{applicationName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateInvitationAssessment" parameterType="com.ruoyi.project.onlineReview.domain.InvitationAssessment">
+        update invitation_assessment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="corporateName != null  and corporateName != ''">corporate_name = #{corporateName},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="auditType != null  and auditType != ''">audit_type = #{auditType},</if>
+            <if test="applicationUrl != null  and applicationUrl != ''">application_url = #{applicationUrl},</if>
+            <if test="submitter != null  and submitter != ''">submitter = #{submitter},</if>
+            <if test="currentState != null  and currentState != ''">current_state = #{currentState},</if>
+            <if test="auditTime != null ">audit_time = #{auditTime},</if>
+            <if test="approver != null  and approver != ''">approver = #{approver},</if>
+            <if test="applicationName != null  and applicationName != ''">application_name = #{applicationName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteInvitationAssessmentById" parameterType="java.lang.Long">
+        delete from invitation_assessment where id = #{id}
+    </delete>
+
+    <delete id="deleteInvitationAssessmentByIds" parameterType="java.lang.String">
+        delete from invitation_assessment where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

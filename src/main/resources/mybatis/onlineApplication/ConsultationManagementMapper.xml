@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.onlineApplication.mapper.ConsultationManagementMapper">
+
+    <resultMap type="com.ruoyi.project.onlineApplication.domain.ConsultationManagement" id="ConsultationManagementResult">
+        <result property="id"    column="id"    />
+        <result property="qualificationName"    column="qualification_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="qualificationEntrance"    column="qualification_entrance"    />
+        <result property="templateData"    column="template_data"    />
+        <result property="managementData"    column="management_data"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="applicationFeedback"    column="application_feedback"    />
+        <result property="applicant"    column="applicant"    />
+    </resultMap>
+
+    <sql id="selectConsultationManagementVo">
+        select id, qualification_name, create_time,applicant, qualification_entrance, template_data, management_data,application_feedback, tenant_id from consultation_management
+    </sql>
+
+    <select id="selectConsultationManagementList" parameterType="com.ruoyi.project.onlineApplication.domain.ConsultationManagement" resultMap="ConsultationManagementResult">
+        <include refid="selectConsultationManagementVo"/>
+        <where>
+            <if test="qualificationName != null  and qualificationName != ''"> and qualification_name like concat('%', #{qualificationName}, '%')</if>
+            <if test="qualificationEntrance != null  and qualificationEntrance != ''"> and qualification_entrance = #{qualificationEntrance}</if>
+            <if test="templateData != null  and templateData != ''"> and template_data = #{templateData}</if>
+            <if test="managementData != null  and managementData != ''"> and management_data = #{managementData}</if>
+            <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
+        </where>
+    </select>
+
+    <select id="selectByTeacherConsultationManagementList" parameterType="com.ruoyi.project.onlineApplication.domain.ConsultationManagement" resultMap="ConsultationManagementResult">
+        <include refid="selectConsultationManagementVo"/>
+        <where>
+            <if test="qualificationName != null  and qualificationName != ''"> and qualification_name like concat('%', #{qualificationName}, '%')</if>
+            <if test="qualificationEntrance != null  and qualificationEntrance != ''"> and qualification_entrance = #{qualificationEntrance}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
+        </where>
+    </select>
+
+    <select id="selectConsultationManagementById" parameterType="java.lang.Long" resultMap="ConsultationManagementResult">
+        <include refid="selectConsultationManagementVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectConsultationManagementByQualificationEntrance" parameterType="java.lang.String" resultMap="ConsultationManagementResult">
+        <include refid="selectConsultationManagementVo"/>
+        where qualification_entrance = #{qualificationEntrance}
+    </select>
+
+    <insert id="insertConsultationManagement" parameterType="com.ruoyi.project.onlineApplication.domain.ConsultationManagement" useGeneratedKeys="true" keyProperty="id">
+        insert into consultation_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qualificationName != null  and qualificationName != ''">qualification_name,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="qualificationEntrance != null  and qualificationEntrance != ''">qualification_entrance,</if>
+            <if test="templateData != null  and templateData != ''">template_data,</if>
+            <if test="managementData != null  and managementData != ''">management_data,</if>
+            <if test="tenantId != null ">tenant_id,</if>
+            <if test="applicant != null ">applicant,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qualificationName != null  and qualificationName != ''">#{qualificationName},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="qualificationEntrance != null  and qualificationEntrance != ''">#{qualificationEntrance},</if>
+            <if test="templateData != null  and templateData != ''">#{templateData},</if>
+            <if test="managementData != null  and managementData != ''">#{managementData},</if>
+            <if test="tenantId != null ">#{tenantId},</if>
+            <if test="applicant != null ">#{applicant},</if>
+         </trim>
+    </insert>
+
+    <update id="updateConsultationManagement" parameterType="com.ruoyi.project.onlineApplication.domain.ConsultationManagement">
+        update consultation_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qualificationName != null  and qualificationName != ''">qualification_name = #{qualificationName},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="applicationFeedback != null ">application_feedback = #{applicationFeedback},</if>
+            <if test="qualificationEntrance != null  and qualificationEntrance != ''">qualification_entrance = #{qualificationEntrance},</if>
+            <if test="templateData != null  and templateData != ''">template_data = #{templateData},</if>
+            <if test="managementData != null  and managementData != ''">management_data = #{managementData},</if>
+            <if test="tenantId != null ">tenant_id = #{tenantId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="changeStatus">
+        UPDATE `consultation_management` SET `status` = #{status} WHERE (`id` = #{id});
+    </update>
+
+    <delete id="deleteConsultationManagementById" parameterType="java.lang.Long">
+        delete from consultation_management where id = #{id}
+    </delete>
+
+    <delete id="deleteConsultationManagementByIds" parameterType="java.lang.String">
+        delete from consultation_management where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
